@@ -1,4 +1,4 @@
-$Q.define('View.Tab3.directories.stores', {
+﻿$Q.define('View.Tab3.directories.stores', {
     extend: 'Grid',
     title: '<h3>Справочник магазинов</h3>',
     columns: [
