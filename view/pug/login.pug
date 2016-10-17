@@ -1,0 +1,42 @@
+doctype html
+html(lang='en')
+  include includes/head
+  body
+    //include includes/navbar
+    div.container
+      div.row
+        div.Absolute-Center.is-Responsive
+          div.col-sm-12.col-md-10.col-md-offset-1
+            if authorized
+              div.alert.alert-success
+                p
+                  | You are
+                  em   #{username}
+                p
+                  a(href="/logout").btn.btn-small.btn-inverse Sign Out
+            else
+              if redirectedFrom
+                div.alert.alert-warning
+                  h4.alert-heading Access denied
+                  | Sorry, unauthorized users can't view this page
+              if wrongPassword
+                div.alert.alert-danger
+                  h4.alert-heading Error
+                  | Login or password was wrong
+            form.well.form-horizontal(method='post',action='')
+              input(type='hidden', name='sys',value='login').form-control
+              div.form-group.input-group
+                span.input-group-addon
+                  i.glyphicon.glyphicon-user
+                input(type='text', placeholder='Login', name='login', role='textbox').form-control
+              div.form-group.input-group
+                span.input-group-addon
+                   i.glyphicon.glyphicon-lock
+                input.input-small(type='password', placeholder='Password', name='password', role='textbox').form-control
+              div.form-group.text-center
+                button.btn(type="submit").btn.btn-def.btn-block Login
+              div.checkbox
+                label.checkbox
+                  input(type='checkbox', name='remember')
+                  span Remember me
+    include includes/footer
