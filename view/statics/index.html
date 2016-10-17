@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Tasks</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <style type="text/css">
+        table tbody tr.selected,
+        table.table-striped tbody tr.selected,
+        .table-hover > tbody > tr:hover {
+            background-color: #83A3EF;
+        }
+    </style>
+    <script src="js/json2.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/backbone.js"></script>
+    <script src="js/backbone.localStorage.js"></script>
+    <script src="loginData.js"></script>
+
+    <script src="js/q.js"></script>
+    <script src="js/models/employee.js"></script>
+
+
+
+    <script src="js/store/employee.js"></script>
+
+    <script src="js/controllers/controllers.js"></script>
+    <script src="js/controllers/crud.js"></script>
+    <script src="js/view/Tab1/employee.js"></script>
+    <script src="js/view/Tab2/canvans.js"></script>
+
+
+    <script src="js/view/Tab3/storesData.js"></script>
+    <script src="js/view/Tab3/roles.js"></script>
+    <script src="js/view/Tab3/directories/stores.js"></script>
+    <script src="js/view/Tab3/directories/books.js"></script>
+    <script src="js/view/Tab3/directories/autors.js"></script>
+    <script src="js/view/Tab3/employee.js"></script>
+    <script src="js/view/Tab3/employee/roles.js"></script>
+
+
+
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+<ul class="nav nav-tabs">
+    <li><a data-toggle="tab" href="#task1">Task 1</a></li>
+    <li><a data-toggle="tab" href="#task2">Task 2</a></li>
+    <li class="active" ><a data-toggle="tab" href="#task3">Task 3</a></li>
+    <li><a data-toggle="tab" href="#task4">Task 4</a></li>
+</ul>
+<div class="tab-content">
+    <div id="task1" class="tab-pane fade "          ><div role="View.Tab1.employee"></div></div>
+    <div id="task2" class="tab-pane fade container" ><div role="View.Tab2.canvans"></div></div>
+    <div id="task3" class="tab-pane fade in active" >
+       <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Книжный магазин</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a data-toggle="tab"  href="#storesData">Книги</a></li>
+                    <li class="dropdown hidden" auth="admin" ><a class="dropdown-toggle" data-toggle="dropdown" href="#">Справочники<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a data-toggle="tab"  href="#books">Книг</a></li>
+                            <li><a data-toggle="tab"  href="#autors">Авторов</a></li>
+                            <li><a data-toggle="tab"  href="#stores">Магазинов</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown hidden" auth="admin" ><a class="dropdown-toggle" data-toggle="dropdown" href="#">Права<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a data-toggle="tab"  href="#roles">Роли</a></li>
+                            <li><a data-toggle="tab"  href="#booksEmployee">Сотрудники</a></li>
+                            <li><a data-toggle="tab"  href="#employeRoles">Роли сотрудников</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right"  >
+                    <li><a href="/login"><span class="glyphicon glyphicon-user"></span>&nbsp<span map-data="loginData.username"></span></a></li>
+                    <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container-fluid tab-content">
+            <div id="storesData"    class="tab-pane fade in active"   ><div role="View.Tab3.storesData"         ></div></div>
+            <div id="books"         class="tab-pane fade "            ><div role="View.Tab3.directories.books"  ></div></div>
+            <div id="autors"        class="tab-pane fade "            ><div role="View.Tab3.directories.autors" ></div></div>
+            <div id="stores"        class="tab-pane fade "            ><div role="View.Tab3.directories.stores" ></div></div>
+            <div id="roles"         class="tab-pane fade "            ><div role="View.Tab3.roles"              ></div></div>
+            <div id="booksEmployee" class="tab-pane fade "            ><div role="View.Tab3.employee"           ></div></div>
+            <div id="employeRoles"  class="tab-pane fade "            ><div role="View.Tab3.employee.roles"     ></div></div>
+        </div>
+    </div>
+    <div id="task4" class="tab-pane fade " >
+        <div role="View.block" controller="CRUD" ref="{}"   >
+            <detail opt role="window" test="true" ref="{}" >
+                <items opt role="form"  tagName="form" ref="form"  defaults="{ Role:'form.field.text', type: 'text'}" >
+                    <children opt name="storename"   title="Магазин"    ></children>
+                    <children opt name="bookname"    title="Книга"      ></children>
+                    <children opt name="autors"      title="Автор(ы)"   ></children>
+                    <children opt name="count"       title="Количество" ></children>
+                </items>
+            </detail>
+            <h3>Книги</h3>
+            <div opt  role="block" defaults="{Role:'View.button',tagName:'button',className:'btn btn-default'}"   >
+                <button role="View.button"  handler="read"    ><span class="glyphicon glyphicon-refresh"></span></button>
+                <div opt handler="create"  ><span class="glyphicon glyphicon-plus"></span></div>
+                <div opt handler="update"  ><span class="glyphicon glyphicon-pencil"></span></div>
+                <div opt handler="delete"  ><span class="glyphicon glyphicon-remove-sign"></span></div>
+            </div>
+            <div opt role="View.table" src="/src/storesData" ref="table"  >
+                <columns opt name="storename"   title="Магазин"     ></columns>
+                <columns opt name="bookname"    title="Книга"       ></columns>
+                <columns opt name="autors"      title="Автор(ы)"    ></columns>
+                <columns opt name="count"       title="Количество"  ></columns>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
