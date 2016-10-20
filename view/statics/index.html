@@ -99,15 +99,15 @@
     <div id="task4" class="tab-pane fade " >
         <div role="View.block" controller="CRUD" ref="{}"   >
             <detail opt role="window" test="true" ref="{}" >
-                <items opt role="form"  tagName="form" ref="form"  defaults="{ Role:'form.field.text', type: 'text'}" >
+                <items opt role="form"  tagName="form" ref="form"  defaults="{ role:'form.field.text', type: 'text'}" >
                     <children opt name="storename"   title="Магазин"    ></children>
                     <children opt name="bookname"    title="Книга"      ></children>
-                    <children opt name="autors"      title="Автор(ы)"   ></children>
-                    <children opt name="count"       title="Количество" ></children>
+                    <children opt name="autors"      title="Автор(ы)"   role="form.field.combo"   src="/src/autors" blockTpl="<option style='padding: 3px 20px;clear: both;' value='<%= el.id %>'><%= el.attributes.last_name+' '+el.attributes.name+' '+el.attributes.middle_name  %></option>" ></children>
+                    <children opt name="count"       title="Количество"                    ></children>
                 </items>
             </detail>
             <h3>Книги</h3>
-            <div opt  role="block" defaults="{Role:'View.button',tagName:'button',className:'btn btn-default'}"   >
+            <div opt  role="block" defaults="{role:'View.button',tagName:'button',className:'btn btn-default'}"   >
                 <button role="View.button"  handler="read"    ><span class="glyphicon glyphicon-refresh"></span></button>
                 <div opt handler="create"  ><span class="glyphicon glyphicon-plus"></span></div>
                 <div opt handler="update"  ><span class="glyphicon glyphicon-pencil"></span></div>

@@ -1,6 +1,6 @@
 $Q.define('store.employee',{
     extend:'Backbone.Collection',
-    model: $Q.Role('models.employee'),
+    model: $Q.role('models.employee'),
     localStorage: new Backbone.LocalStorage("employee-backbone"), 
     initialize: function() {
       var sync =function(model){          model.save();              };

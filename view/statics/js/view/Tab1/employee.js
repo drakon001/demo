@@ -50,15 +50,15 @@ $Q.define('View.Tab1.employee',{
     ref:{},
     children:[
         {
-            Role:'View.block',
+            role:'View.block',
             children:[
-                { Role:'View.button', tagName:"button", className:"btn btn-default", handler:"create", text:'<span class="glyphicon glyphicon-plus"></span>' },
-                { Role:'View.button', tagName:"button", className:"btn btn-default", handler:"update", text:'<span class="glyphicon glyphicon-pencil"></span>' },
-                { Role:'View.button', tagName:"button", className:"btn btn-default", handler:"delete", text:'<span class="glyphicon glyphicon-remove-sign"></span>' }
+                { role:'View.button', tagName:"button", className:"btn btn-default", handler:"create", text:'<span class="glyphicon glyphicon-plus"></span>' },
+                { role:'View.button', tagName:"button", className:"btn btn-default", handler:"update", text:'<span class="glyphicon glyphicon-pencil"></span>' },
+                { role:'View.button', tagName:"button", className:"btn btn-default", handler:"delete", text:'<span class="glyphicon glyphicon-remove-sign"></span>' }
             ]
         },
         {
-            Role:'View.table',
+            role:'View.table',
             ref:'table',
             columns:[
                 {   name:'firstName',   title:'First  Name'    },
@@ -71,13 +71,13 @@ $Q.define('View.Tab1.employee',{
         }
     ],
     detail:{
-        Role:'window',
+        role:'window',
         items:[
             {
-                Role:'form',
+                role:'form',
                 tagName:"form",
                 ref:'form',
-                defaults:{        Role: 'form.field.text'       },
+                defaults:{        role: 'form.field.text'       },
                 children:[
                     { name:'firstName',     label:'First&nbspName',     type:'text', placeholder:'First  Name'     },
                     { name:'secondName',    label:'Second&nbspName',    type:'text', placeholder:'Second Name'     },

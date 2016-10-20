@@ -74,28 +74,28 @@ var $Q = function () {
             chain.prototype = null;
             return result;
         },
-        construct: function (Role, args) {
+        construct: function (role, args) {
             function classObject() {
-                return Role.apply(this, args);
+                return role.apply(this, args);
             }
 
-            classObject.prototype = Role.prototype;
+            classObject.prototype = role.prototype;
             return new classObject();
         },
         define: function (name, obj) {
             if (typeof(name) === 'object') {
                 obj = name;
-                name = obj.Role;
+                name = obj.role;
             }
             else
-                obj.Role = name;
+                obj.role = name;
             //constructor exist, just set it
             if (typeof(obj) == 'function')
                 return this.setDefined(name, obj);
 
             if (obj && obj.extend) {
 
-                var parent = typeof(obj.extend) == 'string' ? this.Role(obj.extend) : obj.extend,
+                var parent = typeof(obj.extend) == 'string' ? this.role(obj.extend) : obj.extend,
                     cl;
                 
                 if (typeof(parent.extend) != 'function' )
@@ -119,14 +119,14 @@ var $Q = function () {
         },
         create: function (name) {
             if (typeof(name) == "string")
-                return this.construct(this.Role(name), ([]).slice.apply(arguments, [1]));
-            return this.construct(this.Role(name.Role || name.role), arguments);
+                return this.construct(this.role(name), ([]).slice.apply(arguments, [1]));
+            return this.construct(this.role(name.role || name.role), arguments);
         },
-        Role: function (name) {
-            var Role = this.getDefined(name) || this.path(window, name);
-            if (!Role)
-                throw new Error('Role not found:' + name);
-            return Role
+        role: function (name) {
+            var role = this.getDefined(name) || this.path(window, name);
+            if (!role)
+                throw new Error('role not found:' + name);
+            return role
         },
         bind: function (dom, attribute, option) {
             var data = dom.attr(attribute), conf;
@@ -160,7 +160,7 @@ var $Q = function () {
             //   return e;
             //}
         },
-        bindRole:function(root){
+        bindrole:function(root){
             "use strict";
             var view = this;
             view.registred = view.registred || [];
@@ -168,7 +168,7 @@ var $Q = function () {
                 var el = $(this);
                 if (el.attr('role') && !el.attr('view') )
                     view.registred.push($Q.bind(el,'role',{ parentBlock:view }));
-                view.bindRole(el);
+                view.bindrole(el);
             });
         },
         clearObj: function (obj) {
@@ -258,7 +258,7 @@ $Q.define('View', {
     viewTpl: '',
     registred: [],
     prefix: 'View_',
-    parentRole: function (Role) {     return  Role ? Role.constructor.__super__ : this.constructor.__super__;   },
+    parentrole: function (role) {     return  role ? role.constructor.__super__ : this.constructor.__super__;   },
     callParent: function (arg) {
         arg = arg || [];
         var caller,name,owner,parent;
@@ -282,11 +282,11 @@ $Q.define('View', {
             name = caller.method;
         }
         owner = caller.owner;
-        parent = this.parentRole(owner);
+        parent = this.parentrole(owner);
         while (parent) {
             if (typeof(parent[name]) == 'function')
                 return parent[name].apply(this, arg);
-            parent = this.parentRole(parent);
+            parent = this.parentrole(parent);
         }
     },
     getParentBlock: function () {      return this.parentBlock;   },
@@ -455,7 +455,7 @@ $Q.define('View.block', {
                 '<%=el%>' +
             '<% } else { %>' +
                 '<<%=el.tagname|| el.tagName || "div"%>' +
-                '  role="<%=el.Role|| el.role || el%>"     ' +
+                '  role="<%=el.role|| el.role || el%>"     ' +
                 '  conf="<%=blockName%>.<%=num%>"  >' +
                 '</<%=el.tagname|| el.tagName ||"div"%>>' +
             '<%  } %>',
@@ -534,14 +534,14 @@ $Q.define('View.rowModel', {
     extend: 'View.block',
     tagName: 'tr',
     blockName:'cells',
-    blockTpl: '<td  role="<%= el.Role || el.role %>"  conf="<%=blockName%>.<%=num%>" ></td>',
+    blockTpl: '<td  role="<%= el.role || el.role %>"  conf="<%=blockName%>.<%=num%>" ></td>',
     getModel: function () {
         return this.model;
     },
     initItems: function () {
         var tBody  =  this.getParentBlock(),
             table  =  tBody.getParentBlock();
-        this.model = table.getList().get(this.$el.attr("data-model"));
+        this.model = table.collection.get(this.$el.attr("data-model"));
         this.cells = table.columns;
         this.bind(this.model, {
             'change': 'render',
@@ -549,43 +549,12 @@ $Q.define('View.rowModel', {
         });
     }
 });
-$Q.define('View.table', {
+
+$Q.define('View.collection', {
     extend: 'View.block',
     className: 'table-responsive',
-    headrsTpl:'<%= el.title   %>',
-    rowTpl:"<%= el.id %>",
-    viewTpl: '<table class="table table-striped  table-hover">' +
-         '<thead><tr role="block"  blockTpl="<th><%= headrsTpl %></th>"                                     blockName="parentBlock.columns"  </tr></thead>' +
-         '<tbody     role="block"  blockTpl="<tr role=\'View.rowModel\' data-model=<%= rowTpl %> ></tr>"    blockName="parentBlock.collection.models"  ></tbody>' +
-    '</table>',
-    defaults: {
-        Role: 'View.cellModel'
-    },
-    columns: [],
-    selectedRowClass: 'selected',
-    getList: function () {
-        return this.collection;
-    },
-    selectRow: function (model, flag) {
-        var me = this;
-        if (!model)
-            return;
-        this.$('tr[data-model=' + model.id + ']').each(function () {
-            $(this)[flag ? 'addClass' : 'removeClass'](me.selectedRowClass);
-        });
-    },
     refresh: function () {
         this.collection.fetch();
-    },
-    select: function (event) {
-        //debugger;
-        this.selectRow(this.selected, false);
-        this.selectRow((this.selected = this.collection.get($(event.currentTarget).attr('data-model'))), true);
-        console.log('select', this.selected);
-    },
-
-    events: {
-        "click tr": "select"
     },
     linkSrc: function (src) {
         if (!src)
@@ -598,14 +567,14 @@ $Q.define('View.table', {
                 return {};
             }
         });
-        return $Q.Role(model);
+        return $Q.role(model);
     },
     linkModel: function (model) {
         if (!model)
             return;
 
         if (_.isString(model))
-            model = $Q.Role(model);
+            model = $Q.role(model);
 
         var store = 'store.' + _.uniqueId('auto_');
         $Q.define(store, {
@@ -637,11 +606,7 @@ $Q.define('View.table', {
 
         if (typeof(this.collection) == "string")
             this.collection = $Q.create(this.collection);
-        
-        if (typeof(this.columns) == 'string')
-            this.columns = $Q.clone($Q.path(this,this.columns)) || [];
-        
-        this.setDefaults(this.columns);
+
         this.bind(this.collection, {
             'add': 'render',
             'remove': 'render'
@@ -649,9 +614,10 @@ $Q.define('View.table', {
 
         this.callParent(arguments);
         var vw=this;
+
         if (this.autoLoad === true)
             this.collection.fetch();
-        //if (this.autoLoad == 'show'){
+
         this.$el.on('show', function(e){
             "use strict";
             if (e.target != this )
@@ -660,7 +626,44 @@ $Q.define('View.table', {
         });
         if (this.$el.is(':visible'))
             vw.collection.fetch();
-        //}
+    }
+});
+
+$Q.define('View.table', {
+    extend: 'View.collection',
+    className: 'table-responsive',
+    headrsTpl:'<%= el.title   %>',
+    rowTpl:"<%= el.id %>",
+    viewTpl: '<table class="table table-striped  table-hover">' +
+         '<thead><tr role="block"  blockTpl="<th><%= headrsTpl %></th>"                                     blockName="parentBlock.columns"  </tr></thead>' +
+         '<tbody     role="block"  blockTpl="<tr role=\'View.rowModel\' data-model=<%= rowTpl %> ></tr>"    blockName="parentBlock.collection.models"  ></tbody>' +
+    '</table>',
+    defaults: {
+        role: 'View.cellModel'
+    },
+    columns: [],
+    selectedRowClass: 'selected',
+    selectRow: function (model, flag) {
+        var me = this;
+        if (!model)
+            return;
+        this.$('tr[data-model=' + model.id + ']').each(function () {
+            $(this)[flag ? 'addClass' : 'removeClass'](me.selectedRowClass);
+        });
+    },
+    select: function (event) {
+        this.selectRow(this.selected, false);
+        this.selectRow((this.selected = this.collection.get($(event.currentTarget).attr('data-model'))), true);
+        console.log('select', this.selected);
+    },
+    events: {
+        "click tr": "select"
+    },
+    initItems: function (conf) {
+        if (typeof(this.columns) == 'string')
+            this.columns = $Q.clone($Q.path(this,this.columns)) || [];
+        this.setDefaults(this.columns);
+        this.callParent(arguments);
     }
 });
 $Q.define('View.button', {
@@ -714,13 +717,13 @@ $Q.define('window', {
     '</div>',
     title: '',
     header: [
-        { Role: 'View.button', tagName: "button", className: "close", handler: "close", text: '×' },
-        { Role: 'View.block', tagName: "h4", className: "modal-title", viewTpl: '<%=parentBlock.parentBlock.title%>' }
+        { role: 'View.button', tagName: "button", className: "close", handler: "close", text: '×' },
+        { role: 'View.block', tagName: "h4", className: "modal-title", viewTpl: '<%=parentBlock.parentBlock.title%>' }
     ],
     items: [],
     footer:[
-        { Role: 'View.button', tagName: "button", className: "btn btn-default", handler: "save", text: 'Save'  },
-        { Role: 'View.button', tagName: "button", className: "btn btn-default", handler: "close", text: 'Close' }
+        { role: 'View.button', tagName: "button", className: "btn btn-default", handler: "save", text: 'Save'  },
+        { role: 'View.button', tagName: "button", className: "btn btn-default", handler: "close", text: 'Close' }
     ],
     destroy: function (missDestroy) {
         var me = this,
@@ -794,14 +797,13 @@ $Q.define('form', {
         this.getModel().save();
     },
     initialize: function (conf) {
-        debugger;
         this.callParent(arguments);
         if (this.record)
             this.setModel(this.record);
     }
 });
 $Q.define('form.field.text', {
-    extend: 'View.block',
+    extend: 'View',
     tagName: 'div',
     className: ' row form-group form-horizontal ',
     placeholder: '',
@@ -810,6 +812,44 @@ $Q.define('form.field.text', {
     type: 'text',
     title: '',
     viewTpl: '<label class="control-label col-sm-2" ><%=label || title %></label><div class="col-sm-10"><input type="<%=type%>" class="form-control" name=<%=name%>  placeholder="<%=placeholder%>"></div>'
+});
+$Q.define('form.field.combo', {
+    extend: 'View.collection',
+    tagName: 'div',
+    className: 'row form-group form-horizontal',
+    placeholder: '',
+    label: '',
+    name: 'name',
+    displayField:'name',
+    valueField:'name',
+    title: '',
+    blockName:'collection.models',
+    autoLoad:true,
+    events: {
+           "change select": "select"
+    },
+    select:function(e){
+        this.value =   this.collection.get($(e.target).val());
+    },
+    getSelection:function(){
+       return this.value instanceof Array?this.value:[this.value];
+    },
+    inputTpl:'<%= getSelection().join(",") %>',
+    getDisplayValue:function(){
+        var vw=this;
+        return _.template(typeof (vw.inputTpl) == 'function'?vw.inputTpl(vw):vw.inputTpl )(vw);
+    },
+    value:null,
+    blockTpl: '<option value="<%= el.id %>"  ><%= el.get( displayField ) %></option>',
+    viewTpl:function(){
+        return '<label class="control-label col-sm-2" ><%= title %></label>'+
+            '<div class="col-sm-10" >'+
+                '<select   test="true"  name="<%= name %>" class="form-control ">'+
+                this.callParent(arguments)+
+                '<option  style="display: none" selected data-model="<%= value %>"  ><%= getDisplayValue() %></option>'+
+                '</select>' +
+            '</div>';
+    }
 });
 
 $Q.define('Grid', {
@@ -821,19 +861,19 @@ $Q.define('Grid', {
         '<div opt role="block"  blockName="parentBlock.tbar"    defaults="<%=$Q.stringify(parentBlock.tbarDefaults)%>"   ></div>'+
         '<div opt role="View.table" src="<%=src%>"  ref="table"  columns="parentBlock.columns"></div>',
     detail: {
-        Role: 'window',
+        role: 'window',
         ref: {},
         items: [
             {
-                Role: 'form',
+                role: 'form',
                 tagName: "form",
                 ref: 'form',
-                defaults: {        Role: 'form.field.text', type: 'text'       },
+                defaults: {        role: 'form.field.text', type: 'text'       },
                 children: []
             }
         ]
     },
-    tbarDefaults:{Role:'View.button',tagName:'button',className:'btn btn-default'},
+    tbarDefaults:{role:'View.button',tagName:'button',className:'btn btn-default'},
     tbar: [
         { handler: "read",   text: '<span class="glyphicon glyphicon-refresh"></span>'},
         { handler: "create", text: '<span class="glyphicon glyphicon-plus"></span>' },

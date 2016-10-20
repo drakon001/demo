@@ -12,7 +12,7 @@ $(function(){
                console.log('Main View render',this);
                var view = this;
                this.$('[tpl]'  ).each(function () {    $Q.bind($(this),'tpl',  { parentBlock:view });   });
-               $Q.bindRole(this.$el);
+               $Q.bindrole(this.$el);
 
                this.$('[auth]').each(function () {
                    var el  =$(this),
